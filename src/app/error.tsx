@@ -7,10 +7,13 @@ import { useRouter } from 'next/navigation';
 const ErrorPage = ({ error }: any) => {
   const router = useRouter();
   
+  if ( error ) {
+    console.error(error);
+  }
   return (
     <ErrorContainer>
       <h1>Something went wrong</h1>
-      <p>{error?.message || 'An unexpected error occurred. Please try again later.'}</p>
+      <p>{'An unexpected error occurred. Please try again later.'}</p>
       <HomeButton onClick={() => router.push('/')}>Go to Homepage</HomeButton>
     </ErrorContainer>
   );
