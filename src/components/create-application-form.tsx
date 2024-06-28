@@ -63,6 +63,7 @@ export default function ApplicationCreateForm() {
                             name="additional_info"
                             label="Additional Info"
                             placeholder="Enter additional info"
+                            maxLength={254}
                         />
                         <Select
                             label="Status"

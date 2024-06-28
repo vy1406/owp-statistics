@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react';
 import styled from 'styled-components';
 
@@ -9,6 +11,7 @@ const StatusChip = styled.div<{ status: string }>`
   display: inline-block;
   padding: 0.25em 0.75em;
   border-radius: 12px;
+  width: fit-content;
   font-size: 0.875em;
   color: white;
   background-color: ${({ status }) =>
@@ -19,6 +22,8 @@ const StatusChip = styled.div<{ status: string }>`
 `;
 
 const Status: React.FC<StatusProps> = ({ status }) => {
+  console.log(status);
+  
   return (
     <StatusChip status={status}>
       {status}

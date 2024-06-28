@@ -5,14 +5,12 @@ import styled from 'styled-components';
 import { calculateDaysDifference, calculateDaysSinceDate } from '@/app/utils';
 
 interface CountersProps {
-  status: string,
   decision_date: string | null,
   application_date: string,
   biometric_date: string | null;
 }
 
 const Counters: React.FC<CountersProps> = ({
-  status,
   application_date,
   decision_date,
   biometric_date

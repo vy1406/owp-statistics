@@ -89,7 +89,6 @@ const CollapsibleApplicationBox: React.FC<CollapsibleApplicationBoxProps> = ({ a
             application_date={application.application_date}
             biometric_date={application.biometric_date}
             decision_date={application.decision_date}
-            status={application.status}
           />
           <Separator />
           <Actions>
@@ -111,7 +110,7 @@ const CollapsibleApplicationBox: React.FC<CollapsibleApplicationBoxProps> = ({ a
             {copied && <Copied >Link copied!</Copied>}
           </Actions>
         </Container>
-        <CreatedBy>user: {application?.user?.username}</CreatedBy>
+        <CreatedBy>creator: {application?.user?.username}</CreatedBy>
       </div>
     </div>
   );
