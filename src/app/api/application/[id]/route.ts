@@ -18,6 +18,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
         const { id } = params;
         const formData = await request.formData();
         const application_date = formData.get('application_date') as string;
+        const is_self_submitted = formData.get('is_self_submitted') as string || false;
         const biometric_date = formData.get('biometric_date') as string | null;
         const decision_date = formData.get('decision_date') as string | null;
         const submission_city = formData.get('submission_city') as string | null;
@@ -44,6 +45,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
                 biometric_date,
                 decision_date,
                 submission_city,
+                is_self_submitted: is_self_submitted === "true" ? true : false,
                 additional_info,
                 status,
                 updated_at: new Date()

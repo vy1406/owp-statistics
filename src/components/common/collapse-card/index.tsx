@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from '../../icons/chevron';
 import { Application as PrismaApplication, User as PrismaUser } from "@prisma/client";
-import { Link } from "@nextui-org/react";
+import { Checkbox, Link } from "@nextui-org/react";
 import { calculateDaysDifference, calculateDaysSinceDate, formatDate } from '@/app/utils';
 import styled from 'styled-components';
 import Counters from './days';
@@ -92,6 +92,10 @@ const CollapsibleApplicationBox: React.FC<CollapsibleApplicationBoxProps> = ({ a
           <Row>
             <Title>Biometric Date:</Title>
             <Text>{formatDate(application.biometric_date)}</Text>
+          </Row>
+          <Row>
+            <Title>Self submitted ? </Title>
+            <Text>{application.is_self_submitted ? "Yes" : "No"}</Text>
           </Row>
           {application.submission_city && <Row>
             <Title>Submission City:</Title>

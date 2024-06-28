@@ -18,13 +18,13 @@ import Status from '@/components/common/collapse-card/status';
 import styled from 'styled-components';
 import { Application } from '@prisma/client';
 import { useFormStatus } from 'react-dom';
+import ApplicationSkeleton from '@/components/common/application-skeleton';
 
 const STATUS_MAP = {
   Pending: 'Pending',
   Rejected: 'Rejected',
   Approved: 'Approved',
 };
-
 
 const ApplicationShow = () => {
   const { id } = useParams();
@@ -33,6 +33,11 @@ const ApplicationShow = () => {
   const [application, setApplication] = useState<Application | null>(null);
   const [isOwner, setIsOwner] = useState(false);
   const [isPending, setIsPending] = useState(false);
+  const [decisionDate, setDecisionDate] = useState('');
+  const [statusOptions, setStatusOptions] = useState([STATUS_MAP.Pending, STATUS_MAP.Rejected, STATUS_MAP.Approved]);
+  const [selectedStatus, setSelectedStatus] = useState(STATUS_MAP.Pending);
+  const [statusRequired, setStatusRequired] = useState(false);
+  const [isSelfSubmitted, setIsSelfSubmitted] = useState(true);
 
   useEffect(() => {
     const fetchApplication = async () => {
@@ -43,6 +48,8 @@ const ApplicationShow = () => {
           const data = await response.json();
           setApplication(data);
           setIsOwner(session?.user?.id === data.user_id);
+          setDecisionDate(data.decision_date ?? '');
+          setSelectedStatus(data.status);
         } else {
           router.replace('/not-found');
         }
@@ -57,30 +64,45 @@ const ApplicationShow = () => {
     }
   }, [id, session?.user?.id, router]);
 
+  useEffect(() => {
+    setIsSelfSubmitted(application?.is_self_submitted ?? true);
+  }, [application])
+
+  useEffect(() => {
+    if (decisionDate) {
+      setStatusOptions([STATUS_MAP.Rejected, STATUS_MAP.Approved]);
+      setSelectedStatus(STATUS_MAP.Approved);
+      setStatusRequired(true);
+    } else {
+      setStatusOptions([STATUS_MAP.Pending]);
+      setStatusRequired(false);
+      setSelectedStatus(STATUS_MAP.Pending);
+    }
+  }, [decisionDate]);
+
   const handleDelete = async () => {
     const confirmed = confirm("Are you sure you want to delete this application?");
-    setIsPending(true)
+    setIsPending(true);
     if (confirmed) {
       try {
         const response = await fetch(`/api/application/${id}/delete`, {
           method: 'POST'
         });
-        setIsPending(false)
+        setIsPending(false);
         if (response.ok) {
           router.push('/application');
         } else {
           console.error("Failed to delete application");
         }
       } catch (error) {
-        setIsPending(false)
+        setIsPending(false);
         console.error("Failed to delete application", error);
       }
     }
   };
 
-
   if (!application) {
-    return <div>Loading...</div>;
+    return <ApplicationSkeleton />;
   }
 
   return (
@@ -90,19 +112,21 @@ const ApplicationShow = () => {
           <Wrap>
             <Status status={application.status} />
             <Checkbox
-              name='is_self_submitted'
-              value={application.is_self_submitted ? 'true' : 'false'}
-              isSelected={application.is_self_submitted ?? false}
-            >
-              <CheckboxWrap>
-                <Text>
-                  Self submitted
-                </Text>
-                <Hint>
-                  ( No counselor )
-                </Hint>
-              </CheckboxWrap>
-            </Checkbox>
+            name='is_self_submitted'
+            value={isSelfSubmitted.toString()}
+            isSelected={isSelfSubmitted}
+            onChange={() => setIsSelfSubmitted(!isSelfSubmitted)}
+          >
+            <CheckboxWrap>
+              <Text>
+                Self submitted
+              </Text>
+              <Hint>
+                ( No counselor )
+              </Hint>
+            </CheckboxWrap>
+          </Checkbox>
+          
           </Wrap>
           <Input
             type="text"
@@ -133,7 +157,10 @@ const ApplicationShow = () => {
             label="Decision Date"
             placeholder="Enter decision date"
             defaultValue={application.decision_date ?? ''}
+            value={decisionDate}
+            onChange={(e) => setDecisionDate(e.target.value)}
             disabled={!isOwner}
+            required={isOwner && statusRequired}
           />
           <Input
             name="submission_city"
@@ -154,11 +181,13 @@ const ApplicationShow = () => {
           <RadioGroup
             label="Choose status"
             name="status"
-            defaultValue={application.status}
+            value={selectedStatus}
+            onChange={(value) => setSelectedStatus(value.target.value)}
+            isRequired={isOwner && statusRequired}
           >
-            <Radio value={STATUS_MAP.Approved}>{STATUS_MAP.Approved}</Radio>
-            <Radio value={STATUS_MAP.Pending}>{STATUS_MAP.Pending}</Radio>
-            <Radio value={STATUS_MAP.Rejected}>{STATUS_MAP.Rejected}</Radio>
+            {statusOptions.map((status) => (
+              <Radio key={status} value={status}>{status}</Radio>
+            ))}
           </RadioGroup>
           {isOwner && <FormButton>Save</FormButton>}
           {isOwner && (
