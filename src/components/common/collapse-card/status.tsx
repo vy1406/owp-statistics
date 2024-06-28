@@ -18,7 +18,6 @@ const StatusChip = styled.div<{ color: string }>`
 `;
 
 const Status: React.FC<StatusProps> = ({ status }) => {
-  console.log(status);
   const color = status === 'Pending' ? '#FFD700' : status === 'Rejected' ? '#FF6347' : status === 'Approved' ? '#32CD32' : '#D3D3D3';
   return (
     <StatusChip color={color}>

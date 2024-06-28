@@ -36,14 +36,6 @@ export async function POST(request: Request, { params }: { params: { id: string 
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
 
-        console.log("Updating application:", id, {
-            application_date,
-            biometric_date,
-            decision_date,
-            submission_city,
-            additional_info,
-            status
-        });
 
         await db.application.update({
             where: { id },

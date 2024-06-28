@@ -19,7 +19,7 @@ export default function Menu() {
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const { data: session } = useSession();
     const isLoggedIn = session ? true : false;
-
+    
     const menuItems = [
         { name: "All Applications", href: "/application", isAllowed: true },
         { name: "My Applications", href: "/application/my", isAllowed: isLoggedIn },
@@ -57,7 +57,7 @@ export default function Menu() {
             <NavbarContent justify="end">
                 {isLoggedIn ?
                     <>
-                        <User name={session?.username || 'Guest'} />
+                        <User name={session?.user?.username || 'Guest'} />
                     </>
                     :
                     <>

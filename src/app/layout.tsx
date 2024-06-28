@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { SessionProvider } from "next-auth/react";
 import "./globals.css";
-import SignOutButton from "@/components/sign-out";
 import Providers from "./providers";
-import Profile from "@/components/profile";
 import Menu from "@/components/menu";
 
 
@@ -23,8 +19,6 @@ export default function RootLayout({
       <Providers>
         <body>
           <Menu />
-              <Profile />
-              <SignOutButton />
           {children}
         </body>
       </Providers>

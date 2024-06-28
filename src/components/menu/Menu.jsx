@@ -30,7 +30,6 @@ export default function Menu() {
                     className="sm:hidden"
                 />
             </NavbarContent>
-
             <NavbarContent className="hidden sm:flex gap-4" justify="center">
                 <NavbarItem>
                     <Link color="foreground" href="#/application">
