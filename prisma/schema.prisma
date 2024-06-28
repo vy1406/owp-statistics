@@ -16,6 +16,7 @@ model User {
   password       String
   sessions       Session[]
   applications   Application[]
+  logs           Log[]
 }
 
 model Session {
@@ -35,7 +36,17 @@ model Application {
   status           String
   submission_city  String?
   additional_info  String?
+  is_self_submitted Boolean
   created_at       DateTime     @default(now())
   updated_at       DateTime     @default(now())
   user             User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Log {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  message   String
+  level     String
+  created_at DateTime @default(now())
+  user_id   String?
+  user      User?     @relation(fields: [user_id], references: [id], onDelete: SetNull)
 }

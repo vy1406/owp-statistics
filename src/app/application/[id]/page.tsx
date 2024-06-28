@@ -3,16 +3,21 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { db } from '@/db';
+
 import {
   Input,
   Textarea,
   RadioGroup,
-  Radio
+  Radio,
+  Button,
+  Checkbox
 } from '@nextui-org/react';
 
 import FormButton from '@/components/common/form-button';
 import Status from '@/components/common/collapse-card/status';
+import styled from 'styled-components';
+import { Application } from '@prisma/client';
+import { useFormStatus } from 'react-dom';
 
 const STATUS_MAP = {
   Pending: 'Pending',
@@ -20,16 +25,6 @@ const STATUS_MAP = {
   Approved: 'Approved',
 };
 
-interface Application {
-  id: string;
-  application_date: string;
-  biometric_date?: string;
-  decision_date?: string;
-  submission_city?: string;
-  additional_info?: string;
-  status: 'Pending' | 'Rejected' | 'Approved';
-  user_id: string;
-}
 
 const ApplicationShow = () => {
   const { id } = useParams();
@@ -37,12 +32,13 @@ const ApplicationShow = () => {
   const { data: session }: any = useSession();
   const [application, setApplication] = useState<Application | null>(null);
   const [isOwner, setIsOwner] = useState(false);
+  const [isPending, setIsPending] = useState(false);
 
   useEffect(() => {
     const fetchApplication = async () => {
       try {
         const response = await fetch(`/api/application/${id}`);
-        
+
         if (response.ok) {
           const data = await response.json();
           setApplication(data);
@@ -61,6 +57,28 @@ const ApplicationShow = () => {
     }
   }, [id, session?.user?.id, router]);
 
+  const handleDelete = async () => {
+    const confirmed = confirm("Are you sure you want to delete this application?");
+    setIsPending(true)
+    if (confirmed) {
+      try {
+        const response = await fetch(`/api/application/${id}/delete`, {
+          method: 'POST'
+        });
+        setIsPending(false)
+        if (response.ok) {
+          router.push('/application');
+        } else {
+          console.error("Failed to delete application");
+        }
+      } catch (error) {
+        setIsPending(false)
+        console.error("Failed to delete application", error);
+      }
+    }
+  };
+
+
   if (!application) {
     return <div>Loading...</div>;
   }
@@ -69,7 +87,23 @@ const ApplicationShow = () => {
     <div className="m-4">
       <form method="POST" action={`/api/application/${application.id}`}>
         <div className="flex flex-col gap-4 p-4">
-          <Status status={application.status} />
+          <Wrap>
+            <Status status={application.status} />
+            <Checkbox
+              name='is_self_submitted'
+              value={application.is_self_submitted ? 'true' : 'false'}
+              isSelected={application.is_self_submitted ?? false}
+            >
+              <CheckboxWrap>
+                <Text>
+                  Self submitted
+                </Text>
+                <Hint>
+                  ( No counselor )
+                </Hint>
+              </CheckboxWrap>
+            </Checkbox>
+          </Wrap>
           <Input
             type="text"
             label="Creator"
@@ -127,6 +161,11 @@ const ApplicationShow = () => {
             <Radio value={STATUS_MAP.Rejected}>{STATUS_MAP.Rejected}</Radio>
           </RadioGroup>
           {isOwner && <FormButton>Save</FormButton>}
+          {isOwner && (
+            <Button onClick={handleDelete} color="danger" isLoading={isPending}>
+              Delete
+            </Button>
+          )}
         </div>
       </form>
     </div>
@@ -134,3 +173,23 @@ const ApplicationShow = () => {
 };
 
 export default ApplicationShow;
+
+const Wrap = styled.div`
+  display:flex;
+  align-items: center;
+  justify-content: space-between;
+`
+
+const Text = styled.div`
+    font-size: 0.875rem;
+    font-weight: 400;
+`
+
+const Hint = styled.div`
+    font-size: 0.6rem;
+`
+
+const CheckboxWrap = styled.div`
+    display: flex;
+    gap: 10px;
+`

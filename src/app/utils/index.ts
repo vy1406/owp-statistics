@@ -4,17 +4,19 @@
  * @returns A string representing the date in DD/MM/YYYY format.
  */
 export function formatDate(date: Date | string | number | null | undefined): string {
-
     if (!date) {
         return 'N/A';
     }
 
     const parsedDate = new Date(date);
 
+    if (isNaN(parsedDate.getTime())) {
+        return 'Invalid date';
+    }
 
-    const day = String(parsedDate.getDate()).padStart(2, '0');
-    const month = String(parsedDate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const year = parsedDate.getFullYear();
+    const day = String(parsedDate.getUTCDate()).padStart(2, '0');
+    const month = String(parsedDate.getUTCMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = parsedDate.getUTCFullYear();
 
     return `${day}/${month}/${year}`;
 }
@@ -38,7 +40,10 @@ export function calculateDaysSinceDate(date: Date | string | number | null | und
         throw new Error("Invalid date");
     }
 
-    const timeDifference = today.getTime() - givenDate.getTime();
+    const givenDateUTC = Date.UTC(givenDate.getUTCFullYear(), givenDate.getUTCMonth(), givenDate.getUTCDate());
+    const todayUTC = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+
+    const timeDifference = todayUTC - givenDateUTC;
 
     const daysDifference = Math.floor(timeDifference / (1000 * 3600 * 24));
 
@@ -51,17 +56,21 @@ export function calculateDaysSinceDate(date: Date | string | number | null | und
  * @param date2 - The second date. Can be a Date object, a string, or a number.
  * @returns The number of days between the two dates.
  */
+
 export function calculateDaysDifference(date1: Date | string | number, date2: Date | string | number): string {
     const firstDate = new Date(date1);
     const secondDate = new Date(date2);
-  
+
     if (isNaN(firstDate.getTime()) || isNaN(secondDate.getTime())) {
-      return 'N/A';
+        return 'N/A';
     }
-  
-    const timeDifference = Math.abs(secondDate.getTime() - firstDate.getTime());
-  
+
+    const firstDateUTC = Date.UTC(firstDate.getUTCFullYear(), firstDate.getUTCMonth(), firstDate.getUTCDate());
+    const secondDateUTC = Date.UTC(secondDate.getUTCFullYear(), secondDate.getUTCMonth(), secondDate.getUTCDate());
+
+    const timeDifference = Math.abs(secondDateUTC - firstDateUTC);
+
     const daysDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
-  
+
     return daysDifference.toString();
-  }
+}

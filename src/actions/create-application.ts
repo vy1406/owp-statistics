@@ -14,12 +14,14 @@ interface CreateApplicationFormState {
     decision_date?: string[];
     submission_city?: string[];
     additional_info?: string[];
+    is_self_submitted?: string[];
   };
 }
 
 export async function createApplication(
   formState: CreateApplicationFormState,
-  formData: FormData
+  formData: FormData,
+  onSuccess: () => void
 ): Promise<CreateApplicationFormState> {
   const session: any = await getServerSession(authOptions as any);
 
@@ -36,10 +38,17 @@ export async function createApplication(
   const decision_date = formData.get('decision_date') as string | null;
   const submission_city = formData.get('submission_city') as string | null;
   const additional_info = formData.get('additional_info') as string | null;
+  const is_self_submitted = formData.get('is_self_submitted') as string || false;
   const status = formData.get('status') as string;
 
-  console.log(formData);
-  
+  const calculateStatus = () => {
+    if ( decision_date) {
+      return 'Approved';
+    } else { 
+      return status
+    }
+  }
+
   try {
     await db.application.create({
       data: {
@@ -47,11 +56,13 @@ export async function createApplication(
         decision_date,
         biometric_date,
         submission_city,
+        is_self_submitted: is_self_submitted === "true" ? true : false,
         additional_info,
         user_id: session.user.id, 
-        status: status,
+        status: calculateStatus(),
       },
     });
+    onSuccess()
   } catch (err: unknown) {
     if (err instanceof Error) {
       return {
@@ -67,7 +78,8 @@ export async function createApplication(
       };
     }
   }
-
+  
   revalidatePath('/application');
   redirect('/application');
+
 }

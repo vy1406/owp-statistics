@@ -7,8 +7,22 @@ export default function Signin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("")
 
+  const clearLocalStorage = () => {
+    localStorage.clear();
+  };
+
+  const clearCookies = () => {
+    const cookies = document.cookie.split("; ");
+    for (let cookie of cookies) {
+      const cookieName = cookie.split("=")[0];
+      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    clearLocalStorage()
+    clearCookies()
     try {
       const res = await fetch("/api/auth/signup", {
         method: "POST",

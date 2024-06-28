@@ -1,6 +1,6 @@
 'use client';
 
-import { useFormState } from 'react-dom';
+import { useFormState, useFormStatus } from 'react-dom';
 import {
     Input,
     Button,
@@ -8,11 +8,14 @@ import {
     Select,
     SelectItem,
     Popover,
+    Checkbox,
     PopoverTrigger,
     PopoverContent,
 } from '@nextui-org/react';
 import * as actions from '@/actions';
 import FormButton from './common/form-button';
+import styled from 'styled-components';
+import { useEffect, useState } from 'react';
 
 export const STATUS_MAP = {
     Pending: 'Pending',
@@ -21,17 +24,17 @@ export const STATUS_MAP = {
 };
 
 export default function ApplicationCreateForm() {
-    const [formState, action] = useFormState(actions.createApplication, {
-        errors: {},
-    });
+    const [isSelfSubmitted, setIsSelfSubmitted] = useState(true)
+    const { pending } = useFormStatus();
+    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
     return (
-        <Popover placement="left">
+        <Popover isOpen={isPopoverOpen} placement="top" >
             <PopoverTrigger>
-                <Button color="primary">Create an Application</Button>
+                <Button color="primary" onClick={() => setIsPopoverOpen(true)}>Create an Application</Button>
             </PopoverTrigger>
             <PopoverContent>
-                <form action={action}>
+                <form method="POST" action={`/api/application/create`}>
                     <div className="flex flex-col gap-4 p-4 w-80">
                         <h3 className="text-lg">Create an Application</h3>
                         <Input
@@ -65,21 +68,52 @@ export default function ApplicationCreateForm() {
                             placeholder="Enter additional info"
                             maxLength={254}
                         />
+
                         <Select
                             label="Status"
                             name='status'
-                            className="max-w-[45%]"
                             defaultSelectedKeys={[STATUS_MAP.Pending]}
                         >
                             <SelectItem key={STATUS_MAP.Pending}>{STATUS_MAP.Pending}</SelectItem>
                             <SelectItem key={STATUS_MAP.Rejected}>{STATUS_MAP.Rejected}</SelectItem>
                             <SelectItem key={STATUS_MAP.Approved}>{STATUS_MAP.Approved}</SelectItem>
                         </Select>
-
-                        <FormButton>Save</FormButton>
+                        <Checkbox
+                            name='is_self_submitted'
+                            isSelected={isSelfSubmitted}
+                            value={isSelfSubmitted.toString()}
+                            onChange={() => setIsSelfSubmitted(!isSelfSubmitted)}
+                        >
+                            <Wrap>
+                                <Text>
+                                    Self submitted
+                                </Text>
+                                <Hint>
+                                    ( No counselor )
+                                </Hint>
+                            </Wrap>
+                        </Checkbox>
+                        <Button type="submit" isLoading={pending} onClick={() => {console.log("kik");
+                        }}>
+                            Save
+                        </Button>
                     </div>
                 </form>
             </PopoverContent>
         </Popover>
     );
 }
+
+const Text = styled.div`
+    font-size: 0.875rem;
+    font-weight: 400;
+`
+
+const Hint = styled.div`
+    font-size: 0.6rem;
+`
+
+const Wrap = styled.div`
+    display: flex;
+    gap: 10px;
+`
