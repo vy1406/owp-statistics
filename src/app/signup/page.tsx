@@ -1,24 +1,33 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import { useState } from "react";
 
 export default function Signin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("")
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await signIn("credentials", {
-      redirect: false,
-      username,
-      password
-    });
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
 
-    if (!res?.error) {
-      window.location.href = "/";
-    } else {
-      console.error("Sign-in error:", res.error);
+      if (res.ok) {
+
+        window.location.href = "/";
+
+      } else {
+        const errorData = await res.json();
+        setError("Please try later...")
+        console.error("Signup error:", errorData);
+      }
+    } catch (error) {
+      setError("Please try later...")
+      console.error("Signup request failed:", error);
     }
   };
 
@@ -37,6 +46,7 @@ export default function Signin() {
         onChange={(e) => setPassword(e.target.value)}
       />
       <button type="submit">Sign In</button>
+      {error && <div> {error}</div>}
     </form>
   );
 }

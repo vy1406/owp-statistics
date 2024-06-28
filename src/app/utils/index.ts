@@ -44,3 +44,24 @@ export function calculateDaysSinceDate(date: Date | string | number | null | und
 
     return daysDifference.toString();
 }
+
+/**
+ * Calculates the number of days between two dates.
+ * @param date1 - The first date. Can be a Date object, a string, or a number.
+ * @param date2 - The second date. Can be a Date object, a string, or a number.
+ * @returns The number of days between the two dates.
+ */
+export function calculateDaysDifference(date1: Date | string | number, date2: Date | string | number): string {
+    const firstDate = new Date(date1);
+    const secondDate = new Date(date2);
+  
+    if (isNaN(firstDate.getTime()) || isNaN(secondDate.getTime())) {
+      return 'N/A';
+    }
+  
+    const timeDifference = Math.abs(secondDate.getTime() - firstDate.getTime());
+  
+    const daysDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
+  
+    return daysDifference.toString();
+  }

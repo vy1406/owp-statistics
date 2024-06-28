@@ -11,6 +11,7 @@ interface CreateApplicationFormState {
     _form?: string[];
     application_date?: string[];
     biometric_date?: string[];
+    decision_date?: string[];
     submission_city?: string[];
     additional_info?: string[];
   };
@@ -32,6 +33,7 @@ export async function createApplication(
 
   const application_date = formData.get('application_date') as string
   const biometric_date = formData.get('biometric_date') as string | null;
+  const decision_date = formData.get('decision_date') as string | null;
   const submission_city = formData.get('submission_city') as string | null;
   const additional_info = formData.get('additional_info') as string | null;
   const status = formData.get('status') as string;
@@ -42,6 +44,7 @@ export async function createApplication(
     await db.application.create({
       data: {
         application_date,
+        decision_date,
         biometric_date,
         submission_city,
         additional_info,

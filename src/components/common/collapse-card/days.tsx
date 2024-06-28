@@ -2,30 +2,42 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { calculateDaysSinceDate } from '@/app/utils';
+import { calculateDaysDifference, calculateDaysSinceDate } from '@/app/utils';
 
 interface CountersProps {
-    status: string,
-    application_date: string,
-    biometric_date: string | null;
+  status: string,
+  decision_date: string | null,
+  application_date: string,
+  biometric_date: string | null;
 }
 
 const Counters: React.FC<CountersProps> = ({
-    status,
-    application_date,
-    biometric_date
+  status,
+  application_date,
+  decision_date,
+  biometric_date
 }) => {
 
   return (
     <Container>
+      {decision_date ?
         <Row>
+          <Title>From apply to decision: </Title>
+          <Text>{calculateDaysDifference(application_date, decision_date)}</Text>
+        </Row>
+        :
+        <>
+          <Row>
             <Title>Waiting from application: </Title>
             <Text>{calculateDaysSinceDate(application_date)}</Text>
-        </Row>
-        <Row>
+          </Row>
+          <Row>
             <Title>Waiting from biometric: </Title>
             <Text>{calculateDaysSinceDate(biometric_date)}</Text>
-        </Row>
+          </Row>
+        </>
+      }
+
     </Container>
   );
 };

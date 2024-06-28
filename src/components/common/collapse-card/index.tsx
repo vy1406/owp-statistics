@@ -2,11 +2,20 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from '../../icons/chevron';
-import { Application } from '@prisma/client';
+import { Application as PrismaApplication, User as PrismaUser } from "@prisma/client";
 import { Link } from "@nextui-org/react";
 import { calculateDaysSinceDate, formatDate } from '@/app/utils';
 import styled from 'styled-components';
 import Counters from './days';
+import Status from './status';
+
+interface User extends PrismaUser {
+  username: string;
+}
+
+interface Application extends PrismaApplication {
+  user: User;
+}
 
 interface CollapsibleApplicationBoxProps {
   application: Application;
@@ -43,7 +52,7 @@ const CollapsibleApplicationBox: React.FC<CollapsibleApplicationBoxProps> = ({ a
         onClick={handleToggle}
       >
         <span>{formatDate(application.application_date)}</span>
-        <span>{application.status || "--------"}</span>
+        <Status status={application.status}/>
         <span>{calculateDaysSinceDate(application.application_date)} days</span>
         <ChevronDown isOpen={isOpen} />
       </div>
@@ -79,6 +88,7 @@ const CollapsibleApplicationBox: React.FC<CollapsibleApplicationBoxProps> = ({ a
           <Counters
             application_date={application.application_date}
             biometric_date={application.biometric_date}
+            decision_date={application.decision_date}
             status={application.status}
           />
           <Separator />
@@ -101,6 +111,7 @@ const CollapsibleApplicationBox: React.FC<CollapsibleApplicationBoxProps> = ({ a
             {copied && <Copied >Link copied!</Copied>}
           </Actions>
         </Container>
+        <CreatedBy>user: {application?.user?.username}</CreatedBy>
       </div>
     </div>
   );
@@ -115,6 +126,13 @@ const Container = styled.div`
   gap: 4px;
 `;
 
+const CreatedBy = styled.div`
+  padding: 4px;
+  background-color: #f1f1f1;
+  color: #666;
+  font-size: 12px;
+  text-align: left;
+`
 const Title = styled.div`
   width: 10em;
 `

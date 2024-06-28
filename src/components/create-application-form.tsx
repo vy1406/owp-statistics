@@ -27,7 +27,6 @@ export default function ApplicationCreateForm() {
 
     return (
         <Popover placement="left">
-   
             <PopoverTrigger>
                 <Button color="primary">Create an Application</Button>
             </PopoverTrigger>
@@ -49,6 +48,12 @@ export default function ApplicationCreateForm() {
                             placeholder="Enter biometric date"
                         />
                         <Input
+                            name="decision_date"
+                            type="date"
+                            label="Decision Date"
+                            placeholder="Enter decision date"
+                        />
+                        <Input
                             name="submission_city"
                             type="text"
                             label="Submission City"
@@ -63,6 +68,7 @@ export default function ApplicationCreateForm() {
                             label="Status"
                             name='status'
                             className="max-w-[45%]"
+                            defaultSelectedKeys={[STATUS_MAP.Pending]}
                         >
                             <SelectItem key={STATUS_MAP.Pending}>{STATUS_MAP.Pending}</SelectItem>
                             <SelectItem key={STATUS_MAP.Rejected}>{STATUS_MAP.Rejected}</SelectItem>

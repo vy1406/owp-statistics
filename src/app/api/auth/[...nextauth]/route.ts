@@ -26,9 +26,7 @@ export const authOptions = {
 
         if (!user) return null;
 
-        const isPasswordValid = process.env.DISABLE_PASSWORD_HASHING
-          ? credentials.password === user.password
-          : bcrypt.compareSync(credentials.password, user.password);
+        const isPasswordValid = bcrypt.compareSync(credentials.password, user.password);
 
         if (!isPasswordValid) return null;
 
