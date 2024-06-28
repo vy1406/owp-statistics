@@ -17,7 +17,6 @@ interface Application extends PrismaApplication {
     user: User;
 }
 
-
 const MyAppliocations = () => {
     const router = useRouter();
     const { data: session }: any = useSession();
