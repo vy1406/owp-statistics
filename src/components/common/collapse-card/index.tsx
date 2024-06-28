@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from '../../icons/chevron';
 import { Application as PrismaApplication, User as PrismaUser } from "@prisma/client";
 import { Link } from "@nextui-org/react";
-import { calculateDaysSinceDate, formatDate } from '@/app/utils';
+import { calculateDaysDifference, calculateDaysSinceDate, formatDate } from '@/app/utils';
 import styled from 'styled-components';
 import Counters from './days';
 import Status from './status';
@@ -45,16 +45,39 @@ const CollapsibleApplicationBox: React.FC<CollapsibleApplicationBoxProps> = ({ a
       .catch(err => console.error('Failed to copy: ', err));
   };
 
+  const isDicisionMade = application.decision_date ? true : false;
+
   return (
     <div className="border rounded shadow-md mb-4">
       <div
         className="flex justify-between items-center p-4 bg-gray-100 cursor-pointer"
         onClick={handleToggle}
       >
-        <span>{formatDate(application.application_date)}</span>
-        <Status status={application.status}/>
-        <span>{calculateDaysSinceDate(application.application_date)} days</span>
-        <ChevronDown isOpen={isOpen} />
+        <Col>
+          <span>{formatDate(application.application_date)}</span>
+        </Col>
+        {isDicisionMade ?
+          <>
+            <Col>
+              <Status status={application.status} />
+            </Col>
+            <Col>
+              <span>After {calculateDaysDifference(application.application_date, application.decision_date!)}d</span>
+            </Col>
+          </>
+          :
+          <>
+            <Col>
+              <Status status={application.status} />
+            </Col>
+            <Col>
+              <span>{calculateDaysSinceDate(application.application_date)} days</span>
+            </Col>
+          </>
+        }
+        <ChevronWrap>
+          <ChevronDown isOpen={isOpen} />
+        </ChevronWrap>
       </div>
       <div
         ref={contentRef}
@@ -155,4 +178,12 @@ const Copied = styled.div`
   color: rgb(34,197,94);
 `
 
+const Col = styled.div`
+  display: flex;
+  justify-content: center;
+`
 
+const ChevronWrap = styled(Col)`
+  display: flex;
+  justify-content: flex-end;
+`

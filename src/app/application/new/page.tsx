@@ -7,9 +7,9 @@ import {
   Textarea,
   RadioGroup,
   Radio,
-  Checkbox
+  Checkbox,
+  Button
 } from '@nextui-org/react';
-import FormButton from '@/components/common/form-button';
 import styled from 'styled-components';
 
 const STATUS_MAP = {
@@ -26,6 +26,7 @@ const NewApplication = () => {
   const [selectedStatus, setSelectedStatus] = useState(STATUS_MAP.Pending);
   const [statusRequired, setStatusRequired] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     if (decisionDate) {
       setStatusOptions([STATUS_MAP.Rejected, STATUS_MAP.Approved]);
@@ -40,7 +41,7 @@ const NewApplication = () => {
 
   const handleOnSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+    setIsLoading(true)
     const formData = new FormData(event.currentTarget);
     formData.set('is_self_submitted', isSelfSubmitted.toString());
 
@@ -51,6 +52,7 @@ const NewApplication = () => {
         body: formData,
       });
 
+        setIsLoading(false)
       if (response.ok) {
         window.location.href = '/application'; // Redirect to the applications page
       } else {
@@ -58,6 +60,7 @@ const NewApplication = () => {
         console.error(result.error);
       }
     } catch (error) {
+        setIsLoading(false)
       console.error('Failed to submit form:', error);
     }
   };
@@ -67,12 +70,6 @@ const NewApplication = () => {
     <div className="m-2">
       <form onSubmit={handleOnSubmit}>
         <div className="flex flex-col gap-4 p-4">
-          <Input
-            type="text"
-            label="Creator"
-            value={session?.user?.username ?? ''}
-            disabled
-          />
           <Input
             name="application_date"
             type="date"
@@ -132,7 +129,7 @@ const NewApplication = () => {
               <Radio key={status} value={status}>{status}</Radio>
             ))}
           </RadioGroup>
-          <FormButton>Save</FormButton>
+          <Button type="submit" isLoading={isLoading}>Save</Button>
         </div>
       </form>
     </div>
