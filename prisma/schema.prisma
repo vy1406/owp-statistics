@@ -1,32 +1,39 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
+  extensions = [pgcrypto]
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  name     String?
-  email    String   @unique
-  password String
-
-  sessions Session[]
+  id             String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username       String      @unique
+  password       String
+  sessions       Session[]
+  applications   Application[]
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       Int
-  user         User     @relation(fields: [userId], references: [id])
-  expires      DateTime
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  session_token  String       @unique
+  user_id        String
+  user           User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  expires        DateTime
+}
+
+model Application {
+  id               String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  application_date String
+  biometric_date   String?
+  user_id          String
+  status           String
+  submission_city  String?
+  additional_info  String?
+  created_at       DateTime     @default(now())
+  user             User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
