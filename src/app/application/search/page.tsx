@@ -1,30 +1,26 @@
-import { db } from '@/db';
 import CollapsibleApplicationBox from '@/components/common/collapse-card';
 import SearchComponent from '@/components/search';
+import { fetchBySearchParams } from '@/db/queries/applications-by-url';
+import Link from 'next/link';
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0;
-
-async function fetchApplications(): Promise<any[]> {
-    const applications = await db.application.findMany({
-        orderBy: {
-            created_at: 'desc',
-        },
-        include: {
-            user: true,
-        },
-    });
-    return applications;
+interface Props { 
+    searchParams: SearchParams;
 }
-
-export default async function ApplicationsPage() {
-    const pulledApplications = await fetchApplications();
+interface SearchParams {
+    dateFrom?: string;
+    dateTo?: string;
+    status?: string;
+    username?: string;
+    sort?: string;
+  }
+  
+export default async function SearchPage({ searchParams }: Props) {
+    const pulledApplications = await fetchBySearchParams(searchParams);
 
     const renderApplications = pulledApplications.map((application) => {
 
         return (
             <>
-
                 <CollapsibleApplicationBox application={application} />
             </>
         );
@@ -33,10 +29,10 @@ export default async function ApplicationsPage() {
     return (
         <div>
             <div className="flex flex-col gap-2">
+           
                 <SearchComponent />
             </div>
             <div className="flex flex-col gap-2">{renderApplications}</div>
         </div>
     );
 }
-
