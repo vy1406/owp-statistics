@@ -56,9 +56,9 @@ export default function Maintenance() {
   return (
     <Container>
       <Content>
-        <Title>We'll be back soon!</Title>
+        <Title>We will be back soon!</Title>
         <Message>
-          Sorry for the inconvenience but we're performing some maintenance at the moment.
+          Sorry for the inconvenience but we are performing some maintenance at the moment.
         </Message>
         <Spinner />
       </Content>

@@ -23,7 +23,7 @@ const ApplicationList = ({ applications }: ApplicationListProps) => {
     return (
         <>
             {applications?.map(application => (
-                <CollapsibleApplicationBox application={application} />))}
+                <CollapsibleApplicationBox application={application} key={application.id}/>))}
         </>
     );
 };
