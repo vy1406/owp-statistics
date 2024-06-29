@@ -103,7 +103,10 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
         const { id } = params;
         const application = await db.application.findUnique({
-            where: { id }
+            where: { id },
+            include: {
+                user: true,
+            },
         });
 
         if (!application) {

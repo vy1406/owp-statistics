@@ -16,9 +16,16 @@ import {
 import FormButton from '@/components/common/form-button';
 import Status from '@/components/common/collapse-card/status';
 import styled from 'styled-components';
-import { Application } from '@prisma/client';
-import { useFormStatus } from 'react-dom';
 import ApplicationSkeleton from '@/components/common/application-skeleton';
+import { Application as PrismaApplication, User as PrismaUser } from "@prisma/client";
+
+interface User extends PrismaUser {
+    username: string;
+}
+
+interface Application extends PrismaApplication {
+    user: User;
+}
 
 const STATUS_MAP = {
   Pending: 'Pending',
@@ -43,7 +50,10 @@ const ApplicationShow = () => {
     const fetchApplication = async () => {
       try {
         const response = await fetch(`/api/application/${id}`);
-
+        console.log("response", response);
+        console.log("sessions", session);
+        
+        
         if (response.ok) {
           const data = await response.json();
           setApplication(data);
@@ -131,7 +141,7 @@ const ApplicationShow = () => {
           <Input
             type="text"
             label="Creator"
-            value={session?.user?.username ?? ''}
+            value={application?.user?.username || "---"}
             disabled
           />
           <Input

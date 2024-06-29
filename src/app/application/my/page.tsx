@@ -3,11 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { Application as PrismaApplication, User as PrismaUser } from "@prisma/client";
 
 import styled from 'styled-components';
 import ApplicationList from '@/components/applications-list';
 import ApplicationSkeleton from '@/components/common/application-skeleton';
+import { Application as PrismaApplication, User as PrismaUser } from "@prisma/client";
 
 interface User extends PrismaUser {
     username: string;
