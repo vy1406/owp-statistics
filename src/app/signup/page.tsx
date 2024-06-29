@@ -36,7 +36,7 @@ export default function SignUp() {
       });
       setIsLoading(false)
       if (res.ok) {
-        router.push("/");
+        router.push(`/signin?username=${encodeURIComponent(username)}`);
       } else {
         const errorData = await res.json();
         setError("Please try later...");
