@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
 import {
   Input,
   Textarea,
@@ -11,6 +10,7 @@ import {
   Button
 } from '@nextui-org/react';
 import styled from 'styled-components';
+import { useRouter } from 'next/navigation';
 
 const STATUS_MAP = {
   Pending: 'Pending',
@@ -19,7 +19,7 @@ const STATUS_MAP = {
 };
 
 const NewApplication = () => {
-  const { data: session }: any = useSession();
+  const router = useRouter();
   const [isSelfSubmitted, setIsSelfSubmitted] = useState(true);
   const [decisionDate, setDecisionDate] = useState('');
   const [statusOptions, setStatusOptions] = useState([STATUS_MAP.Pending]);
@@ -55,7 +55,7 @@ const NewApplication = () => {
 
       setIsLoading(false)
       if (response.ok) {
-        window.location.href = '/application'; // Redirect to the applications page
+        router.push("/application");
       } else {
         const result = await response.json();
         console.error(result.error);

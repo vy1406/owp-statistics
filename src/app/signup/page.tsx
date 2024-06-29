@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { Input, Button } from "@nextui-org/react";
 import styled from "styled-components";
+import { useRouter } from "next/navigation";
 
 export default function SignUp() {
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -34,7 +36,7 @@ export default function SignUp() {
       });
       setIsLoading(false)
       if (res.ok) {
-        window.location.href = "/";
+        router.push("/");
       } else {
         const errorData = await res.json();
         setError("Please try later...");

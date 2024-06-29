@@ -3,8 +3,10 @@
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { Input, Button } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
 
 export default function Signin() {
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +22,7 @@ export default function Signin() {
 
     setIsLoading(false)
     if (!res?.error) {
-      window.location.href = "/";
+      router.push("/");
     }
   };
 
