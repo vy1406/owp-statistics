@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { db } from '@/db';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/utils/authOptions';
 
 interface CreateApplicationFormState {
   errors: {
@@ -23,7 +23,7 @@ export async function createApplication(
   formData: FormData,
   onSuccess: () => void
 ): Promise<CreateApplicationFormState> {
-  const session: any = await getServerSession(authOptions as any);
+  const session: any = await getServerSession(authOptions);
 
   if (!session || !session.user) {
     return {
