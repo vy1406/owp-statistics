@@ -15,15 +15,18 @@
     "@nextui-org/theme": "^2.2.6",
     "@prisma/client": "^5.16.0",
     "bcrypt": "^5.1.1",
+    "file-saver": "^2.0.5",
     "next": "14.2.4",
     "next-auth": "^4.24.7",
     "prisma": "^5.16.0",
     "react": "^18",
     "react-dom": "^18",
-    "styled-components": "^6.1.11"
+    "styled-components": "^6.1.11",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/file-saver": "^2.0.7",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

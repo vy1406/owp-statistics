@@ -1,5 +1,5 @@
 'use client'
-import React from "react";
+import React, { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import {
     Navbar,
@@ -14,17 +14,46 @@ import {
     Button
 } from "@nextui-org/react";
 import styled from "styled-components";
+import HomeIcon from "../icons/homeIcon";
+import { downloadJson, downloadExcel, fetchApplications } from "./action";
 
 export default function Menu() {
-    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { data: session } = useSession();
     const isLoggedIn = session ? true : false;
-    
+    const [applications, setApplications] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState(null)
     const menuItems = [
         { name: "All Applications", href: "/application", isAllowed: true },
         { name: "My Applications", href: "/application/my", isAllowed: isLoggedIn },
         { name: "New Application", href: "/application/new", isAllowed: isLoggedIn },
     ];
+
+    const onError = (error) => {
+        setError(error)
+        setIsLoading(false)
+    }
+
+    const fetch = async (onSuccess) => {
+        if (applications === null) {
+            setIsLoading(true)
+            await fetchApplications(() => onError("Error fetching applications"))
+                .then((data) => {
+                    setApplications(data)
+                    onSuccess(data)
+                    setIsLoading(false)
+                })
+        } else { 
+            onSuccess(applications)
+        }
+    }
+
+    const handleDownloadJson = async () => {
+        await fetch((data) => downloadJson(data))
+    }
+
+
 
     return (
         <Navbar onMenuOpenChange={setIsMenuOpen}>
@@ -33,6 +62,9 @@ export default function Menu() {
                     aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                     className="sm:hidden"
                 />
+                <Link href="/" className="w-full" size="lg">
+                    <HomeIcon size={24} />
+                </Link>
             </NavbarContent>
 
             <NavbarContent className="hidden sm:flex gap-4" justify="center">
@@ -91,11 +123,17 @@ export default function Menu() {
                         }
                     </NavbarMenuItem>
                 ))}
+                <NavbarMenuItem >
+                    <Button onClick={() => handleDownloadJson()} color="primary" variant="light" isLoading={isLoading}>
+                        Download Json
+                    </Button>
+                </NavbarMenuItem>
+               
                 {isLoggedIn &&
                     <NavbarMenuItem >
                         <Link
                             size="sm"
-                            onClick={() => signOut()}
+                            onClick={() => { signOut() }}
                         >
                             LogOut
                         </Link>
