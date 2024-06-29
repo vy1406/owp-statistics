@@ -1,15 +1,24 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input, Button } from "@nextui-org/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams  } from "next/navigation";
 
 export default function Signin() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const usernameFromParams = searchParams.get("username");
+    if (usernameFromParams) {
+      setUsername(usernameFromParams);
+    }
+  }, [searchParams]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     setIsLoading(true)
