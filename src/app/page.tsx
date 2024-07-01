@@ -44,7 +44,7 @@ export default function Home() {
           This site is not for commercial use. It is designed purely for monitoring and statistical purposes. By using this site, you can gain insights into the application process and better manage your expectations.
         </p>
         <p className="mb-4">
-          <strong>Disclaimer:</strong> This application is provided "as is" without any representations or warranties, express or implied. The creator of this application will not be held liable for any damages arising from the use of this application. Users are responsible for the accuracy of the data they input and for complying with any relevant legal requirements. This site is intended for personal use only, and any misuse of the site or its data is strictly prohibited.
+          <strong>Disclaimer:</strong> This application is provided -as is- without any representations or warranties, express or implied. The creator of this application will not be held liable for any damages arising from the use of this application. Users are responsible for the accuracy of the data they input and for complying with any relevant legal requirements. This site is intended for personal use only, and any misuse of the site or its data is strictly prohibited.
         </p>
       </CollapseContainer>
 
