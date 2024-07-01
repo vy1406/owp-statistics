@@ -3,6 +3,7 @@
 import React from 'react';
 import { Link } from "@nextui-org/react";
 import CollapseContainer from './collapse-container';
+import { calculateAverageDays, calculateAveragePendingDays, findFastestApplication, findLongestApplication, findLongestPendingApplication } from './utils';
 
 interface Application {
     id: string;
@@ -16,68 +17,12 @@ interface StatisticsProps {
 }
 
 const Statistics: React.FC<StatisticsProps> = ({ applications }) => {
-    const getDaysDifference = (start: string, end: string): number => {
-        const startDate = new Date(start);
-        const endDate = new Date(end);
-        const difference = endDate.getTime() - startDate.getTime();
-        return Math.ceil(difference / (1000 * 3600 * 24));
-    };
 
-    const findFastestApplication = () => {
-        let fastestApp = null;
-        let minDays = Infinity;
-
-        for (const app of applications) {
-            if (app.status === 'Approved' && app.decision_date) {
-                const days = getDaysDifference(app.application_date, app.decision_date);
-                if (days < minDays) {
-                    minDays = days;
-                    fastestApp = app;
-                }
-            }
-        }
-
-        return fastestApp ? { app: fastestApp, days: minDays } : null;
-    };
-
-    const findLongestApplication = () => {
-        let longestApp = null;
-        let maxDays = -Infinity;
-
-        for (const app of applications) {
-            if (app.status === 'Approved' && app.decision_date) {
-                const days = getDaysDifference(app.application_date, app.decision_date);
-                if (days > maxDays) {
-                    maxDays = days;
-                    longestApp = app;
-                }
-            }
-        }
-
-        return longestApp ? { app: longestApp, days: maxDays } : null;
-    };
-
-    const findLongestPendingApplication = () => {
-        let longestPendingApp = null;
-        let maxDays = -Infinity;
-        const today = new Date().toISOString().split('T')[0];
-
-        for (const app of applications) {
-            if (app.status === 'Pending') {
-                const days = getDaysDifference(app.application_date, today);
-                if (days > maxDays) {
-                    maxDays = days;
-                    longestPendingApp = app;
-                }
-            }
-        }
-
-        return longestPendingApp ? { app: longestPendingApp, days: maxDays } : null;
-    };
-
-    const fastestApplication = findFastestApplication();
-    const longestApplication = findLongestApplication();
-    const longestPendingApplication = findLongestPendingApplication();
+    const fastestApplication = findFastestApplication(applications);
+    const longestApplication = findLongestApplication(applications);
+    const longestPendingApplication = findLongestPendingApplication(applications);
+    const { averageDays: averageApprovedDays, total: totalApproved } = calculateAverageDays(applications, 'Approved');
+    const { averageDays: averagePendingDays, total: totalPending } = calculateAveragePendingDays(applications);
 
     return (
         <CollapseContainer text='Statistics..'>
@@ -130,9 +75,25 @@ const Statistics: React.FC<StatisticsProps> = ({ applications }) => {
                         </p>
                     </div>
                 )}
+                <div className='separator'></div>
+                {averageApprovedDays > 0 &&
+                    <div className="my_stat_avg">
+                        <h4>Avg Approved</h4>
+                        <p>{averageApprovedDays} days</p>
+                        <p>({totalApproved})</p>
+                    </div>
+                }
+                {averagePendingDays > 0 &&
+                    <div className="my_stat_avg">
+                        <h4>Avg Pending</h4>
+                        <p>{averagePendingDays} days</p>
+                        <p>({totalPending})</p>
+                    </div>
+                }
             </div>
         </CollapseContainer>
     );
 };
 
 export default Statistics;
+
