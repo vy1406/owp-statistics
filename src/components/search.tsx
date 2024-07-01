@@ -27,7 +27,7 @@ interface SearchParams {
     dateFrom?: string;
     dateTo?: string;
     status?: string;
-    username?: string;
+    usernameOrInfo?: string;
     sort?: string;
 }
 
@@ -37,7 +37,7 @@ const SearchComponent = () => {
     const [dateFrom, setDateFrom] = useState('');
     const [dateTo, setDateTo] = useState('');
     const [status, setStatus] = useState('');
-    const [username, setUsername] = useState('');
+    const [usernameOrInfo, setUsernameOrInfo] = useState('');
     const [sortOption, setSortOption] = useState('');
 
     useEffect(() => {
@@ -45,14 +45,14 @@ const SearchComponent = () => {
             dateFrom: searchParams.get('dateFrom') || '',
             dateTo: searchParams.get('dateTo') || '',
             status: searchParams.get('status') || '',
-            username: searchParams.get('username') || '',
+            usernameOrInfo: searchParams.get('usernameOrInfo') || '',
             sort: searchParams.get('sort') || ''
         };
 
         setDateFrom(params.dateFrom || "");
         setDateTo(params.dateTo || "");
         setStatus(params.status || "");
-        setUsername(params.username || "");
+        setUsernameOrInfo(params.usernameOrInfo || "");
         setSortOption(params.sort || "");
     }, [searchParams]);
 
@@ -63,7 +63,7 @@ const SearchComponent = () => {
         if (dateFrom) params.dateFrom = dateFrom;
         if (dateTo) params.dateTo = dateTo;
         if (status) params.status = status;
-        if (username) params.username = username;
+        if (usernameOrInfo) params.usernameOrInfo = usernameOrInfo;
         if (sortOption) params.sort = sortOption;
 
         const queryString = new URLSearchParams(params as any).toString();
@@ -74,7 +74,7 @@ const SearchComponent = () => {
         setDateFrom('');
         setDateTo('');
         setStatus('');
-        setUsername('');
+        setUsernameOrInfo('');
         setSortOption('');
         router.push('/application/search');
     };
@@ -110,12 +110,12 @@ const SearchComponent = () => {
                         <SelectItem key={STATUS_MAP.Approved}>{STATUS_MAP.Approved}</SelectItem>
                     </Select>
                     <Input
-                        name="username"
+                        name="usernameOrInfo"
                         type="text"
-                        label="Username"
-                        placeholder="Enter username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        label="Username or Additional Info"
+                        placeholder="Enter username or additional info"
+                        value={usernameOrInfo}
+                        onChange={(e) => setUsernameOrInfo(e.target.value)}
                     />
                     <Select
                         label="Sort By"

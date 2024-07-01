@@ -4,12 +4,12 @@ interface SearchParams {
   dateFrom?: string;
   dateTo?: string;
   status?: string;
-  username?: string;
+  usernameOrInfo?: string; // Changed from username to usernameOrInfo
   sort?: string;
 }
 
 export async function fetchBySearchParams(searchParams: SearchParams): Promise<any[]> {
-  const { dateFrom, dateTo, status, username, sort } = searchParams;
+  const { dateFrom, dateTo, status, usernameOrInfo, sort } = searchParams;
   const where: any = {};
 
   if (dateFrom) {
@@ -26,8 +26,11 @@ export async function fetchBySearchParams(searchParams: SearchParams): Promise<a
     where.status = status;
   }
 
-  if (username) {
-    where.user = { username };
+  if (usernameOrInfo) {
+    where.OR = [
+      { user: { username: { contains: usernameOrInfo, mode: 'insensitive' } } },
+      { additional_info: { contains: usernameOrInfo, mode: 'insensitive' } }
+    ];
   }
 
   const orderBy: any = {};

@@ -53,6 +53,7 @@ export default function SignUp() {
     <div className="my_card_form">
       <form onSubmit={handleSubmit}>
         <div className="my_container_form">
+
           <Input
             color="primary"
             size="lg"
@@ -76,11 +77,12 @@ export default function SignUp() {
               {error}
             </Error>
           )}
+          <div className="my_hint">
+            You can use a made-up username and easy password, just remember it to edit/delete your applications.
+          </div>
         </div>
-
       </form>
     </div>
-
   );
 }
 

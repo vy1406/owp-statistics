@@ -39,6 +39,7 @@ export default function Signin() {
     <div className="my_card_form">
       <form onSubmit={handleSubmit}>
         <div className="my_container_form">
+         
           <Input
             color="primary"
             size="lg"
@@ -54,11 +55,13 @@ export default function Signin() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button type="submit" color="primary" isLoading={isLoading}>
+          <Button type="submit" color="primary" variant="ghost" isLoading={isLoading}>
             Sign In
           </Button>
+          <div className="my_hint">
+            If you cant remember the password or username, contact me.
+          </div>
         </div>
-
       </form>
     </div>
 

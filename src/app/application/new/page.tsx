@@ -27,6 +27,7 @@ const NewApplication = () => {
   const [statusRequired, setStatusRequired] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     if (decisionDate) {
@@ -42,10 +43,41 @@ const NewApplication = () => {
 
   const handleOnSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsLoading(true)
-    const formData = new FormData(event.currentTarget);
-    formData.set('is_self_submitted', isSelfSubmitted.toString());
+    setIsLoading(true);
+    setErrors({});
 
+    const formData = new FormData(event.currentTarget);
+    const applicationDate = formData.get('application_date') as string;
+    const biometricDate = formData.get('biometric_date') as string;
+    const decisionDate = formData.get('decision_date') as string;
+
+    const today = new Date().toISOString().split('T')[0];
+
+    let valid = true;
+    let newErrors: { [key: string]: string } = {};
+
+    if (applicationDate > today) {
+      newErrors['application_date'] = 'Application date cannot be later than today.';
+      valid = false;
+    }
+
+    if (biometricDate && biometricDate < applicationDate) {
+      newErrors['biometric_date'] = 'Biometric date cannot be before application date.';
+      valid = false;
+    }
+
+    if (decisionDate && decisionDate < applicationDate) {
+      newErrors['decision_date'] = 'Decision date cannot be before application date.';
+      valid = false;
+    }
+
+    if (!valid) {
+      setErrors(newErrors);
+      setIsLoading(false);
+      return;
+    }
+
+    formData.set('is_self_submitted', isSelfSubmitted.toString());
 
     try {
       const response = await fetch('/api/application/create', {
@@ -53,19 +85,18 @@ const NewApplication = () => {
         body: formData,
       });
 
-      setIsLoading(false)
+      setIsLoading(false);
       if (response.ok) {
-        router.push("/application");
+        router.push('/application');
       } else {
         const result = await response.json();
         console.error(result.error);
       }
     } catch (error) {
-      setIsLoading(false)
+      setIsLoading(false);
       console.error('Failed to submit form:', error);
     }
   };
-
 
   return (
     <div className="m-2">
@@ -77,12 +108,16 @@ const NewApplication = () => {
             label="Application Date"
             placeholder="Enter application date"
             required
+            isInvalid={!!errors.application_date}
+            errorMessage={errors.application_date}
           />
           <Input
             name="biometric_date"
             type="date"
             label="Biometric Date"
             placeholder="Enter biometric date"
+            isInvalid={!!errors.biometric_date}
+            errorMessage={errors.biometric_date}
           />
           <Input
             name="decision_date"
@@ -92,6 +127,8 @@ const NewApplication = () => {
             value={decisionDate}
             onChange={(e) => setDecisionDate(e.target.value)}
             required={statusRequired}
+            isInvalid={!!errors.decision_date}
+            errorMessage={errors.decision_date}
           />
           <Input
             name="submission_city"
@@ -106,7 +143,7 @@ const NewApplication = () => {
             maxLength={254}
           />
           <Checkbox
-            name='is_self_submitted'
+            name="is_self_submitted"
             isSelected={isSelfSubmitted}
             onChange={() => setIsSelfSubmitted(!isSelfSubmitted)}
           >
@@ -142,14 +179,14 @@ export default NewApplication;
 
 const Hint = styled.div`
     font-size: 0.7rem;
-`
+`;
 
 const Text = styled.div`
     font-size: 0.875rem;
     font-weight: 400;
-`
+`;
 
 const CheckboxWrap = styled.div`
     display: flex;
     gap: 10px;
-`
+`;

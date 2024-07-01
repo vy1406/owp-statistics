@@ -5,10 +5,11 @@ import { ChevronDown } from '../icons/chevron';
 
 interface CollapsibleApplicationBoxProps {
     text: string;
+    subText?: string;
     children: React.ReactNode;
 }
 
-const CollapseContainer: React.FC<CollapsibleApplicationBoxProps> = ({ text, children }) => {
+const CollapseContainer: React.FC<CollapsibleApplicationBoxProps> = ({ text, subText = null, children }) => {
     const [isOpen, setIsOpen] = useState(false);
     const contentRef = useRef<HTMLDivElement>(null);
     const [height, setHeight] = useState('0px');
@@ -25,7 +26,9 @@ const CollapseContainer: React.FC<CollapsibleApplicationBoxProps> = ({ text, chi
         <div className="my_collapseContainer">
             <div className="my_action" onClick={handleToggle}>
                 <div className="my_col">
-                    <div className="my_title">{text}</div>
+                    <div className="my_title">{text} 
+                        {subText && <span className="my_subText">{subText}</span>}
+                    </div>
                 </div>
                 <div className="my_chevronWrap">
                     <ChevronDown isOpen={isOpen} />

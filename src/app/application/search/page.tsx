@@ -30,8 +30,8 @@ export default async function SearchPage({ searchParams }: Props) {
     return (
         <div>
             <div className="flex flex-col gap-2">
-                <Statistics applications={pulledApplications}/>
                 <SearchComponent />
+                <Statistics applications={pulledApplications}/>
             </div>
             <div className="flex flex-col gap-2">{renderApplications}</div>
         </div>
