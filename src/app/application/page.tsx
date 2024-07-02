@@ -2,6 +2,7 @@ import { db } from '@/db';
 import CollapsibleApplicationBox from '@/components/common/collapse-card';
 import SearchComponent from '@/components/search';
 import Statistics from '@/components/common/statistics';
+import GoogleAalytics from '@/components/google_analytics';
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0;
@@ -36,6 +37,7 @@ export default async function ApplicationsPage() {
                 <SearchComponent />
                 <Statistics applications={pulledApplications}/>
             </div>
+            <GoogleAalytics />
             <div className="flex flex-col gap-2">{renderApplications}</div>
         </div>
     );
