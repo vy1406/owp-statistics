@@ -25,7 +25,7 @@ export default async function ApplicationsPage() {
 
         return (
             <>
-                <CollapsibleApplicationBox application={application} />
+                <CollapsibleApplicationBox application={application} key={application.id}/>
             </>
         );
     });

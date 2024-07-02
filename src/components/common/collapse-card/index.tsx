@@ -93,6 +93,10 @@ const CollapsibleApplicationBox: React.FC<CollapsibleApplicationBoxProps> = ({ a
             <Title>Biometric Date:</Title>
             <Text>{formatDate(application.biometric_date)}</Text>
           </Row>
+          {application.decision_date && <Row>
+            <Title>Decision Date:</Title>
+            <Text>{formatDate(application.decision_date)}</Text>
+          </Row>}
           <Row>
             <Title>Self submitted ? </Title>
             <Text>{application.is_self_submitted ? "Yes" : "No"}</Text>
